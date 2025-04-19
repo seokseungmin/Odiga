@@ -7,7 +7,7 @@
       "package-name": "odiga",
       "changelog-path": "CHANGELOG.md",
       "manifest-path": ".",
-      "snapshot": true
+      "snapshot": false
     }
   }
 }
