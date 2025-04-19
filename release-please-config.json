@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "ignoreCommitsWithPattern": ["^Revert\\b"],
+  "packages": {
+    ".": {
+      "release-type": "java",
+      "package-name": "odiga",
+      "changelog-path": "CHANGELOG.md",
+      "manifest-path": ".",
+      "snapshot": true
+    }
+  }
+}
