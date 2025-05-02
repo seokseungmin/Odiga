@@ -27,7 +27,9 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Spring Security 설정 클래스.
@@ -109,8 +111,10 @@ public class SecurityConfig {
 						configuration.setAllowedHeaders(Collections.singletonList("*"));
 						configuration.setMaxAge(3600L);
 						// 노출 헤더 설정
-						configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-						configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+						List<String> exposed = Arrays.asList("Set-Cookie", "Authorization");
+						configuration.setExposedHeaders(exposed);
+
 						return configuration;
 					}
 				}))

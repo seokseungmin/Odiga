@@ -2,6 +2,7 @@ package com.snh.odiga.oauth2;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
@@ -29,6 +30,8 @@ public class CustomClientRegistrationRepository {
 	 *
 	 * @return InMemoryClientRegistrationRepository 객체
 	 */
+
+	@Bean
 	public ClientRegistrationRepository clientRegistrationRepository() {
 		return new InMemoryClientRegistrationRepository(
 				socialClientRegistration.naverClientRegistration(),

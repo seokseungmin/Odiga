@@ -6,7 +6,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/OAuthSession?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: root
-    password: 
+    password:
+
+  config:
+    import: "classpath:application-secret.yml"
 
   jpa:
     hibernate:
