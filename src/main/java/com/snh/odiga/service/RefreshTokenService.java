@@ -2,6 +2,7 @@ package com.snh.odiga.service;
 
 import com.snh.odiga.dto.TokenPair;
 import com.snh.odiga.entity.RefreshToken;
+import com.snh.odiga.global.exception.InvalidOrExpiredRefreshTokenException;
 import com.snh.odiga.repository.RefreshTokenRepository;
 import com.snh.odiga.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
