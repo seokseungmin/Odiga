@@ -1,5 +1,6 @@
 package com.snh.odiga.jwt;
 
+import com.snh.odiga.common.SecurityConstants;
 import com.snh.odiga.dto.CustomOAuth2User;
 import com.snh.odiga.dto.OAuth2UserDto;
 import com.snh.odiga.dto.TokenPair;

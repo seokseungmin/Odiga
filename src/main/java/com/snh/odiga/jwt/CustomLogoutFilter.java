@@ -1,5 +1,6 @@
 package com.snh.odiga.jwt;
 
+import com.snh.odiga.common.SecurityConstants;
 import com.snh.odiga.service.LogoutService;
 import com.snh.odiga.util.CookieUtil;
 import com.snh.odiga.util.JWTUtil;

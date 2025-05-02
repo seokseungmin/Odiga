@@ -53,9 +53,6 @@ public class SecurityConfig {
 	private final CustomOAuth2AuthorizedClientService customOAuth2AuthorizedClientService;
 	private final JdbcTemplate jdbcTemplate;
 
-	//로그 관련 서비스
-	private final LogTrace logTrace;
-
 	/**
 	 * 권한 계층(Role Hierarchy) 설정.
 	 * <p>

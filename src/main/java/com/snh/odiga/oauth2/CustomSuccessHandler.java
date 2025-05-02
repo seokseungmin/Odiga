@@ -1,5 +1,6 @@
 package com.snh.odiga.oauth2;
 
+import com.snh.odiga.common.SecurityConstants;
 import com.snh.odiga.dto.CustomOAuth2User;
 import com.snh.odiga.entity.RefreshToken;
 import com.snh.odiga.entity.Token;
