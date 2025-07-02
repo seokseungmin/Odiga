@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/OAuthSession?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: root
-    password:
+    password: 
 
   config:
     import: "classpath:application-secret.yml"
@@ -23,8 +23,16 @@ spring:
   jwt:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
 
+server:
+  forward-headers-strategy: native
+
+#  sql:
+#    init:
+#      mode: always
+
 logging:
   level:
     org.hibernate.SQL: trace
     org.hibernate.orm.jdbc.bind: trace
     org.apache.coyote.http11: debug
+    org.springframework.security: debug
