@@ -66,10 +66,9 @@ public class TokenReissueController {
 					.body("유효하지 않은 Refresh Token입니다.");
 		}
 
-		// [3] 토큰 정보에서 사용자 정보 추출 및 요청 IP 획득
+		// [3] 토큰 정보에서 사용자 정보 추출
 		String username = jwtUtil.getUsername(refreshToken);
 		String oauthId = jwtUtil.getOauthId(refreshToken);
-		String ip = request.getRemoteAddr();
 
 		// [4] DB에서 Refresh Token 존재 여부 확인
 		refreshTokenService.findByRefreshToken(refreshToken)
@@ -81,8 +80,8 @@ public class TokenReissueController {
 		String role = jwtUtil.getRole(refreshToken);
 
 		// [5] 새 토큰 발급 (Access Token: 10분, Refresh Token: 7일)
-		String newAccessToken = jwtUtil.createJwt(SecurityConstants.TokenCategory.ACCESS, username, oauthId, role, ip, 10 * 60L);
-		String newRefreshToken = jwtUtil.createJwt(SecurityConstants.TokenCategory.REFRESH, username, oauthId, role, ip, 7 * 24 * 60 * 60L);
+		String newAccessToken = jwtUtil.createJwt(SecurityConstants.TokenCategory.ACCESS, username, oauthId, role, 10 * 60L);
+		String newRefreshToken = jwtUtil.createJwt(SecurityConstants.TokenCategory.REFRESH, username, oauthId, role, 7 * 24 * 60 * 60L);
 		log.info("[TokenReissueController] 토큰 재발급 완료 - 사용자: {}, 권한: {}", username, role);
 
 		// [6] 새 Refresh Token 정보를 DB에 저장
@@ -90,7 +89,6 @@ public class TokenReissueController {
 				.oauthId(oauthId)
 				.refreshToken(newRefreshToken)
 				.expiry(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L))
-				.ip(ip)
 				.build();
 		refreshTokenService.save(newTokenEntity);
 

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -35,6 +36,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private final JWTUtil jwtUtil;
 	private final RefreshTokenRepository refreshTokenRepository;
 
+	@Value("${custom.oauth2.frontend-redirect-uri}")
+	private String frontendRedirectUri;
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 										Authentication authentication) throws IOException {
@@ -42,10 +46,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		// [1] OAuth2 로그인 후 인증 객체에서 사용자 정보 추출
 		CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
-		// [2] 사용자 식별 정보 추출: OAuth ID, 사용자 이름, 요청자 IP
+		// [2] 사용자 식별 정보 추출: OAuth ID, 사용자 이름
 		String oauthId = customUserDetails.getOauthId();
 		String name = customUserDetails.getName();
-		String currentIp = request.getRemoteAddr();
 
 		// [3] 사용자 권한(Role) 추출
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -56,15 +59,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		}
 
 		// [4] AccessToken 및 RefreshToken 생성 (AccessToken: 10분, RefreshToken: 7일)
-		String accessToken = jwtUtil.createJwt(Token.access.name(), name, oauthId, role, currentIp, 60 * 10L);
-		String refreshToken = jwtUtil.createJwt(Token.refresh.name(), name, oauthId, role, currentIp, 7 * 24 * 60 * 60L);
+		String accessToken = jwtUtil.createJwt(Token.access.name(), name, oauthId, role, 60 * 10L);
+		String refreshToken = jwtUtil.createJwt(Token.refresh.name(), name, oauthId, role, 7 * 24 * 60 * 60L);
 
-		// [5] RefreshToken 정보를 DB에 저장 (IP도 함께 저장)
+		// [5] RefreshToken 정보를 DB에 저장
 		RefreshToken tokenEntity = RefreshToken.builder()
 				.oauthId(oauthId)
 				.refreshToken(refreshToken)
 				.expiry(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L))
-				.ip(currentIp)
 				.build();
 		refreshTokenRepository.save(tokenEntity);
 
@@ -82,6 +84,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		// [9] 로그인 후 클라이언트(React 등) URI로 리다이렉트
 		response.setStatus(HttpStatus.OK.value());
-		response.sendRedirect("http://localhost:3000/");
+		response.sendRedirect(frontendRedirectUri);
 	}
 }

@@ -66,12 +66,11 @@ public class RefreshTokenService {
 	 * @param username 사용자 이름
 	 * @param oauthId  OAuth 사용자 식별자
 	 * @param role     사용자 권한
-	 * @param ip       요청자의 IP 주소
 	 * @return 새로 발급된 토큰 쌍 (Access Token, Refresh Token)
 	 * @throws InvalidOrExpiredRefreshTokenException 기존 토큰이 DB에 존재하지 않을 경우 예외 발생
 	 */
 	@Transactional
-	public TokenPair rotateTokenAndGenerate(String oldToken, String username, String oauthId, String role, String ip) {
+	public TokenPair rotateTokenAndGenerate(String oldToken, String username, String oauthId, String role) {
 		// DB에서 기존 토큰을 조회하여 존재하지 않으면 예외 발생
 		refreshTokenRepository.findByRefreshToken(oldToken)
 				.orElseThrow(() -> {
@@ -85,21 +84,19 @@ public class RefreshTokenService {
 
 		// 새 토큰 발급 (리프레시 토큰 7일, 엑세스 토큰 10분)
 		String newRefreshToken = jwtUtil.createJwt(
-				SecurityConstants.TokenCategory.REFRESH, username, oauthId, role, ip, 7 * 24 * 60 * 60L);
+				SecurityConstants.TokenCategory.REFRESH, username, oauthId, role, 7 * 24 * 60 * 60L);
 		String newAccessToken = jwtUtil.createJwt(
-				SecurityConstants.TokenCategory.ACCESS, username, oauthId, role, ip, 60 * 60L);
+				SecurityConstants.TokenCategory.ACCESS, username, oauthId, role, 60 * 60L);
 
 		// 새 RefreshToken 엔티티 생성 및 DB 저장 (만료 시간은 밀리초 단위)
 		RefreshToken newTokenEntity = RefreshToken.builder()
 				.refreshToken(newRefreshToken)
 				.oauthId(oauthId)
 				.expiry(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L))
-				.ip(ip)
 				.build();
 		refreshTokenRepository.save(newTokenEntity);
 
-		log.info("[RefreshTokenService] 새 토큰 발급 완료 - access={}, refresh={}, ip={}",
-				newAccessToken, newRefreshToken, ip);
+		log.info("[RefreshTokenService] 새 토큰 발급 완료 - access={}, refresh={}", newAccessToken, newRefreshToken);
 
 		return new TokenPair(newAccessToken, newRefreshToken);
 	}

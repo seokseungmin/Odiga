@@ -75,8 +75,7 @@ public class LogoutService {
 		// [5] 로그 기록 - 토큰으로부터 사용자 정보 추출하여 로깅
 		String oauthId = jwtUtil.getOauthId(refreshToken);
 		String username = jwtUtil.getUsername(refreshToken);
-		log.info("[LogoutService] 로그아웃 완료 - 사용자명: {}, OAuth ID: {}, IP: {}",
-				username, oauthId, request.getRemoteAddr());
+		log.info("[LogoutService] 로그아웃 완료 - 사용자명: {}, OAuth ID: {}", username, oauthId);
 
 		// [6] SecurityContext 초기화 (세션 정보 제거)
 		SecurityContextHolder.clearContext();

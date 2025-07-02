@@ -73,8 +73,7 @@ public class JWTFilter extends OncePerRequestFilter {
 			refreshTokenService.findByRefreshToken(refreshToken)
 					.orElseThrow(InvalidOrExpiredRefreshTokenException::new);
 
-			TokenPair newTokens = refreshTokenService.rotateTokenAndGenerate(
-					refreshToken, username, oauthId, role, request.getRemoteAddr());
+			TokenPair newTokens = refreshTokenService.rotateTokenAndGenerate(refreshToken, username, oauthId, role);
 
 			ResponseCookie accessCookie = CookieUtil.createResponseCookie(
 					SecurityConstants.CookieName.ACCESS, newTokens.accessToken(), 600);
@@ -99,8 +98,6 @@ public class JWTFilter extends OncePerRequestFilter {
 	/**
 	 * JWT 토큰으로부터 사용자 정보를 추출하여 SecurityContextHolder에 인증 객체를 등록한다.
 	 * <p>
-	 * [JWTFilter] - 토큰에 저장된 IP와 현재 요청의 IP를 비교하여 일치하지 않을 경우 인증을 거부하고,
-	 * 쿠키를 삭제 후 재로그인을 요구하는 에러를 반환한다.
 	 *
 	 * @param token    JWT 토큰
 	 * @param request  HttpServletRequest
@@ -109,19 +106,6 @@ public class JWTFilter extends OncePerRequestFilter {
 	 */
 	private void authenticateFromToken(String token, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		// 토큰에 저장된 IP 추출
-		String tokenIp = jwtUtil.getIp(token);
-		// 현재 요청의 IP 추출
-		String requestIp = request.getRemoteAddr();
-
-		// IP가 일치하지 않으면 인증 거부
-		if (!requestIp.equals(tokenIp)) {
-			log.warn("[JWTFilter] IP 불일치: 토큰에 저장된 IP = {}, 요청 IP = {}", tokenIp, requestIp);
-			SecurityContextHolder.clearContext();
-			CookieUtil.clearCookies(response, SecurityConstants.CookieName.ACCESS, SecurityConstants.CookieName.REFRESH);
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "요청 IP가 일치하지 않습니다. 재로그인이 필요합니다.");
-			return;
-		}
 
 		String oauthId = jwtUtil.getUsername(token);
 		String role = jwtUtil.getRole(token);

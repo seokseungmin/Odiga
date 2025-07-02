@@ -116,39 +116,22 @@ public class JWTUtil {
 	}
 
 	/**
-	 * 토큰의 아이피를 추출한다.
-	 *
-	 * @param token JWT 토큰 문자열
-	 * @return 토큰에 저장된 아이피 주소
-	 */
-	public String getIp(String token) {
-		return Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token)
-				.getPayload()
-				.get("ip", String.class);
-	}
-
-	/**
 	 * 새로운 JWT 토큰을 생성한다.
 	 *
 	 * @param category       토큰 카테고리 (예: access, refresh)
 	 * @param name           사용자 이름
 	 * @param oauthId        OAuth 사용자 ID
 	 * @param role           사용자 권한
-	 * @param ip             요청자의 아이피 주소
 	 * @param expiredSeconds 토큰 만료 시간 (초 단위)
 	 * @return 생성된 JWT 토큰 문자열
 	 */
-	public String createJwt(String category, String name, String oauthId, String role, String ip,
+	public String createJwt(String category, String name, String oauthId, String role,
 							Long expiredSeconds) {
 		return Jwts.builder()
 				.claim("category", category)
 				.claim("name", name)
 				.claim("oauthId", oauthId)
 				.claim("role", role)
-				.claim("ip", ip)
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + expiredSeconds * 1000)) // 초를 밀리초로 변환
 				.signWith(secretKey)
