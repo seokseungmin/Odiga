@@ -19,7 +19,7 @@ import lombok.*;
 		indexes = @Index(name = "idx_oauth_id", columnList = "oauthId"),
 		uniqueConstraints = @UniqueConstraint(name = "uk_oauth_id", columnNames = "oauthId")
 )
-public class User {
+public class User extends BaseTimeEntity{
 
 	/**
 	 * 기본 키, 자동 생성되는 사용자 ID.
