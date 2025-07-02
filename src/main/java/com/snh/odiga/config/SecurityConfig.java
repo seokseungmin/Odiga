@@ -24,6 +24,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -70,6 +72,14 @@ public class SecurityConfig {
 				.build();
 	}
 
+	@Bean
+	public HttpFirewall httpFirewall() {
+		StrictHttpFirewall firewall = new StrictHttpFirewall();
+		// PROPFIND 메서드를 추가로 허용합니다.
+		firewall.setAllowedHttpMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH", "PROPFIND"));
+		return firewall;
+	}
+
 	/**
 	 * 정적 리소스 등에 대해 Spring Security 필터를 무시하도록 설정한다.
 	 * <p>
@@ -105,7 +115,7 @@ public class SecurityConfig {
 					@Override
 					public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 						CorsConfiguration configuration = new CorsConfiguration();
-						configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+						configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://odiga.kro.kr"));
 						configuration.setAllowedMethods(Collections.singletonList("*"));
 						configuration.setAllowCredentials(true);
 						configuration.setAllowedHeaders(Collections.singletonList("*"));
