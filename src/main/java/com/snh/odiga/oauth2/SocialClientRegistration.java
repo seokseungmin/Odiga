@@ -28,6 +28,9 @@ public class SocialClientRegistration {
 	@Value("${social.google.client-secret}")
 	private String googleClientSecret;
 
+	@Value("${custom.oauth2.redirect-uri}")
+	private String redirectUriBase;
+
 
 	/**
 	 * 네이버 OAuth2 클라이언트 등록 정보를 반환한다.
@@ -39,7 +42,7 @@ public class SocialClientRegistration {
 				.withRegistrationId("naver")               // 클라이언트 식별용 등록 ID
 				.clientId(naverClientId)            // 네이버에서 발급받은 클라이언트 ID
 				.clientSecret(naverClientSecret)                  // 네이버에서 발급받은 클라이언트 시크릿
-				.redirectUri("http://localhost:8080/login/oauth2/code/naver")  // 네이버 로그인 성공 후 리다이렉트될 URI
+				.redirectUri(redirectUriBase + "/login/oauth2/code/naver")  // 네이버 로그인 성공 후 리다이렉트될 URI
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // OAuth2 인증 방식 (Authorization Code 방식)
 				.scope("name", "email")                      // 사용자에게 요청할 정보 범위(scope)
 				.authorizationUri("https://nid.naver.com/oauth2.0/authorize")     // 사용자 인증을 위한 네이버 인증 페이지 URI
@@ -59,7 +62,7 @@ public class SocialClientRegistration {
 				.withRegistrationId("google")              // 클라이언트 식별용 등록 ID
 				.clientId(googleClientId) // 구글 클라이언트 ID
 				.clientSecret(googleClientSecret)  // 구글 클라이언트 시크릿
-				.redirectUri("http://localhost:8080/login/oauth2/code/google")  // 로그인 성공 시 리다이렉트될 URI
+				.redirectUri(redirectUriBase + "/login/oauth2/code/google")  // 로그인 성공 시 리다이렉트될 URI
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // OAuth2 인증 방식 (Authorization Code 방식)
 				.scope("profile", "email")                   // 사용자에게 요청할 정보 범위 (프로필, 이메일)
 				.authorizationUri("https://accounts.google.com/o/oauth2/v2/auth") // 구글 인증 서버 URI

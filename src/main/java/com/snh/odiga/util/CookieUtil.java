@@ -27,12 +27,12 @@ public class CookieUtil {
 	 */
 	public static ResponseCookie createResponseCookie(String key, String value, int maxAge) {
 		return ResponseCookie.from(key, value)
-				.httpOnly(true)      // 자바스크립트에서 접근 불가
+				.httpOnly(false)      // 자바스크립트에서 접근 불가
 				.path("/")           // 모든 경로에 대해 쿠키 사용
 				.maxAge(maxAge)      // 쿠키 만료 시간 설정
-				.domain("localhost") // 배포 시 도메인에 맞게 수정 필요
-				.sameSite("Strict")  // SameSite 옵션 (Strict, Lax, None 중 선택)
-				.secure(false)       // HTTPS 환경에서만 전송할지 여부
+				//.domain("odiga.kro.kr") // 배포 시 도메인에 맞게 수정 필요
+				.sameSite("None")  // SameSite 옵션 (Strict, Lax, None 중 선택)
+				.secure(true)       // HTTPS 환경에서만 전송할지 여부
 				.build();
 	}
 
@@ -69,12 +69,12 @@ public class CookieUtil {
 	public static void clearCookies(HttpServletResponse response, String... cookieNames) {
 		for (String key : cookieNames) {
 			ResponseCookie clearedCookie = ResponseCookie.from(key, "")
-					.httpOnly(true)
+					.httpOnly(false)
 					.path("/")
 					.maxAge(0)           // maxAge를 0으로 설정하여 삭제 요청
-					.domain("localhost") // 필요에 따라 도메인 수정
-					.sameSite("Strict")
-					.secure(false)
+					//.domain("odiga.kro.kr") // 필요에 따라 도메인 수정
+					.sameSite("None")
+					.secure(true)
 					.build();
 			response.addHeader("Set-Cookie", clearedCookie.toString());
 		}
